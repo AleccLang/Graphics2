@@ -30,7 +30,7 @@ class Triangle:
 class OpenGLWindow:
     
     def __init__(self):
-        self.cube = None
+        self.geo = None
         self.model = Matrix44.identity()
         self.viewPos = Vector3([0.0, 0.0, 4.0])
         self.view = Matrix44.look_at(self.viewPos,Vector3([0.0, 0.0, 0.0]), Vector3([0.0, 1.0, 0.0]))
@@ -105,7 +105,7 @@ class OpenGLWindow:
         self.setupTexture() # loads in and sets up the texture image
         
         # Loads first model
-        self.cube = Geometry('./resources/suzanne.obj')
+        self.geo = Geometry('./resources/ball.obj')
         print("Setup complete!")
 
     def render(self):
@@ -118,7 +118,7 @@ class OpenGLWindow:
         # Renders first model
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, self.model)
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, self.view)
-        glDrawArrays(GL_TRIANGLES, 0, self.cube.vertexCount)
+        glDrawArrays(GL_TRIANGLES, 0, self.geo.vertexCount)
         
         self.lightOrbit(self.orbiting, False) # Updating the light positions
         self.lightColour(self.colourCycle, False) # Updating the light colours
@@ -130,8 +130,8 @@ class OpenGLWindow:
         image = pygame.image.load("./resources/wavy.jpg")
         textureData = pygame.image.tostring(image, "RGB", 1)
         x, y = image.get_rect().size # Gets the width and height of the image
-        self.texture = glGenTextures(1) # Generates 1 texture name
-        glBindTexture(GL_TEXTURE_2D, self.texture) # Binds the texture name
+        texture = glGenTextures(1) # Generates 1 texture name
+        glBindTexture(GL_TEXTURE_2D, texture) # Binds the texture name
         # Setting texture parameters
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
@@ -245,4 +245,4 @@ class OpenGLWindow:
 
     def cleanup(self):
         glDeleteVertexArrays(1, (self.vao,))
-        self.cube.cleanup() 
+        self.geo.cleanup() 
