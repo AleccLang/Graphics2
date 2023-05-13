@@ -1,4 +1,4 @@
-Assignment 1:
+Assignment 2:
 
 Setup assumes that you are using a UNIX-based OS with python3 and python3-venv installed.
 
