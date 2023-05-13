@@ -9,7 +9,7 @@ def main():
 	win =  OpenGLWindow()
 	win.initGL()
 	
-	key = 0	# 'key' denotes whether it is rotate (r), scale (s), transform (t), colour (c) or quit (q)
+	key = 0	# 'key' denotes whether it is rotate (r), scale (s), camera orbit (c), reset (l) or quit (q)
 	axis = 0 # Denotes the x, y or z axis
 	value = 0 # Denotes a step for rotation, scale
 	orbit = False # To set the orbiting of the light sources
@@ -44,17 +44,17 @@ def main():
 					print("Quit")
 					running = False
 				
-				if event.key == pg.K_MINUS: # This is used to adjust the translation, rotation and scaling negatively
+				if event.key == pg.K_MINUS: # This is used to adjust the rotation and scaling negatively
 					value = -1
 				
-				if event.key == pg.K_EQUALS: # This is used to adjust the translation, rotation and scaling positively
+				if event.key == pg.K_EQUALS: # This is used to adjust the rotation and scaling positively
 					value = 1
 
-				if event.key == pg.K_v: # This is used to adjust the colours of the light sources
+				if event.key == pg.K_v: # This is used to cycle the colours of the light sources
 					gradient = True if gradient == False else False
 					win.lightColour(gradient, False)	
      
-				if event.key == pg.K_o: # This is used to adjust the colours of the light sources
+				if event.key == pg.K_o: # This is used to set the lights to orbit around the model
 					orbit = True if orbit == False else False
 					win.lightOrbit(orbit, False)
     

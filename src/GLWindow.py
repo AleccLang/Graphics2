@@ -32,6 +32,7 @@ class OpenGLWindow:
     def __init__(self):
         self.geo = None
         self.model = Matrix44.identity()
+        self.lightModels = [Matrix44.identity(), Matrix44.identity()] # Store light model matrices
         self.viewPos = Vector3([0.0, 0.0, 4.0])
         self.view = Matrix44.look_at(self.viewPos,Vector3([0.0, 0.0, 0.0]), Vector3([0.0, 1.0, 0.0]))
         self.clock = pg.time.Clock()
@@ -41,7 +42,8 @@ class OpenGLWindow:
         self.colourGrad = 0 # Colour gradient value
         self.orbiting = False # Light orbiting flag
         self.colourCycle = False # Light colour cycle flag
-
+        self.scale = Matrix44.from_scale(Vector3([0.2, 0.2, 0.2])) # Scales down the models for the lights
+        self.texture_frames = []
 
     def loadShaderProgram(self, vertex, fragment):
         with open(vertex, 'r') as f:
@@ -111,6 +113,13 @@ class OpenGLWindow:
     def render(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glUseProgram(self.shader)  # You may not need this line
+        
+        # Select the current frame
+        current_time = pygame.time.get_ticks()
+        frame_duration = 100  # Duration of each frame in milliseconds
+        current_frame = (current_time // frame_duration) % len(self.texture_frames)
+        glBindTexture(GL_TEXTURE_2D, self.texture_frames[current_frame])
+    
         modelLoc = glGetUniformLocation(self.shader, "Model")
         viewLoc = glGetUniformLocation(self.shader, "View")
         viewPosLoc = glGetUniformLocation(self.shader, "viewPos")
@@ -120,6 +129,11 @@ class OpenGLWindow:
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, self.view)
         glDrawArrays(GL_TRIANGLES, 0, self.geo.vertexCount)
         
+        # Renders light models
+        for i in range(2):
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, self.lightModels[i])
+            glDrawArrays(GL_TRIANGLES, 0, self.geo.vertexCount)
+        
         self.lightOrbit(self.orbiting, False) # Updating the light positions
         self.lightColour(self.colourCycle, False) # Updating the light colours
         glUniform3fv(viewPosLoc, 1 ,self.viewPos) # Updating the view
@@ -127,17 +141,37 @@ class OpenGLWindow:
         pg.display.flip()
     
     def setupTexture(self):
-        image = pygame.image.load("./resources/wavy.jpg")
-        textureData = pygame.image.tostring(image, "RGB", 1)
-        x, y = image.get_rect().size # Gets the width and height of the image
-        texture = glGenTextures(1) # Generates 1 texture name
-        glBindTexture(GL_TEXTURE_2D, texture) # Binds the texture name
-        # Setting texture parameters
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData) # Stores texture data
+        animatedTex = pygame.image.load("./resources/animatedTexture.jpg")
+        frame_width = 500
+        frame_height = 500
+        rows = 6
+        columns = 8
+
+        for row in range(rows):
+            for col in range(columns):
+                # Calculate the position of the current frame in the image
+                x = col * frame_width
+                y = row * frame_height
+
+                # Create a new surface for the frame
+                frame_surface = pygame.Surface((frame_width, frame_height), pygame.SRCALPHA)
+                
+                # Blit the image onto the new surface at the correct offset
+                frame_surface.blit(animatedTex, (0, 0), (x, y, frame_width, frame_height))
+                
+                # Create texture from surface
+                textureData = pygame.image.tostring(frame_surface, "RGB", 1)
+                x, y = 500, 500
+                texture = glGenTextures(1)
+                glBindTexture(GL_TEXTURE_2D, texture)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData)
+                
+                self.texture_frames.append(texture)
+
 
     def lightColour(self, gradient, reset): # Changes the colour of the lights
         if(reset == True):
@@ -170,8 +204,10 @@ class OpenGLWindow:
             # Reset light positions
             firstLightPosition = glGetUniformLocation(self.shader, "firstLightPos")
             glUniform3f(firstLightPosition, 10.0, 2.0, 0.0)  # First light position
+            self.lightModels[0] = Matrix44.from_translation(Vector3([10.0, 2.0, 0.0]))
             secondLightPosition = glGetUniformLocation(self.shader, "secondLightPos")
             glUniform3f(secondLightPosition, -10.0, -2.0, 0.0)  # Second light position
+            self.lightModels[1] = Matrix44.from_translation(Vector3([-10.0, 2.0, 0.0]))
             self.orbiting = False  # Lights stop orbiting
         else:
             self.orbiting = False if orbit == False else True
@@ -182,11 +218,13 @@ class OpenGLWindow:
                 z = 10.0 * np.sin(np.radians(self.lightAngle))
                 firstLightPosition = glGetUniformLocation(self.shader, "firstLightPos")
                 glUniform3f(firstLightPosition, x, 2.0, z)  # Update first light position
+                self.lightModels[0] = Matrix44.from_translation(Vector3([x, 2.0, z])) * self.scale
                 # Updates the x and z coords for the second light
                 x = -10.0 * np.cos(-np.radians(self.lightAngle))
                 z = -10.0 * np.sin(-np.radians(self.lightAngle))
                 secondLightPosition = glGetUniformLocation(self.shader, "secondLightPos")
-                glUniform3f(secondLightPosition, x, -2.0, z)  # Update second light position           
+                glUniform3f(secondLightPosition, x, -2.0, z)  # Update second light position
+                self.lightModels[1] = Matrix44.from_translation(Vector3([x, -2.0, z])) * self.scale 
 
     def camRotate(self, val): # Rotates the camera around the model
         if(val > 0): # Rotate uniformly if input is positive

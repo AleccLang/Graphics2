@@ -14,10 +14,10 @@ out vec4 OutColour;
 
 uniform float ambientIntensityFirst = 0.4;
 uniform float ambientIntensitySecond = 0.4;
-uniform float specularIntensityFirst = 0.5;
-uniform float specularIntensitySecond = 0.5;
-uniform float shineFirst = 256;
-uniform float shineSecond = 256;
+uniform float specularIntensityFirst = 0.6;
+uniform float specularIntensitySecond = 0.6;
+uniform float shineFirst = 512;
+uniform float shineSecond = 512;
 
 vec3 calcLightComponents(vec3 lightPos, vec3 lightColour, float ambientIntensity, float specularIntensity, float shine) {
     // Ambient light component
