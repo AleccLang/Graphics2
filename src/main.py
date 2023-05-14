@@ -68,7 +68,7 @@ def main():
      
 				if key == pg.K_s and value != 0 and axis != 0:  # This event triggers when the 's' key has been selected, an axis is chosen and + or - has been pressed
 					print("Scale")
-					win.scale(value, axis)
+					win.scaleModel(value, axis)
      
 				if event.key == pg.K_l: # This event triggers when the 'l' key has been selected. It will reset the object to the origin
 					print("Reset")

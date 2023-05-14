@@ -43,7 +43,7 @@ class OpenGLWindow:
         self.orbiting = False # Light orbiting flag
         self.colourCycle = False # Light colour cycle flag
         self.scale = Matrix44.from_scale(Vector3([0.2, 0.2, 0.2])) # Scales down the models for the lights
-        self.textureFrames = [] # List of all 48 frames for the animated texture
+        self.textureFrames = [] # List of all frames for the animated texture
 
     def loadShaderProgram(self, vertex, fragment):
         with open(vertex, 'r') as f:
@@ -94,15 +94,15 @@ class OpenGLWindow:
         
         # First light colour and position
         firstLightPosition = glGetUniformLocation(self.shader, "firstLightPos")
-        glUniform3f(firstLightPosition, 10.0, 2.0, 0.0)  # First light position
+        glUniform3f(firstLightPosition, 10.0, 4.0, 0.0)  # First light position
         firstLightColour = glGetUniformLocation(self.shader, "firstLightColour")
         glUniform3f(firstLightColour, 0.0, 0.0, 1.0)  # First light's colour
 
         # Second light colour and position
         secondLightPosition = glGetUniformLocation(self.shader, "secondLightPos")
-        glUniform3f(secondLightPosition, -10.0, -2.0, 0.0)  # Second light position
+        glUniform3f(secondLightPosition, -10.0, -4.0, 0.0)  # Second light position
         secondLightColour = glGetUniformLocation(self.shader, "secondLightColour")
-        glUniform3f(secondLightColour, 0.0, 1.0, 0.0)  # Second light's colour
+        glUniform3f(secondLightColour, 1.0, 0.0, 0.0)  # Second light's colour
 
         self.setupTexture() # loads in and sets up the texture image
         
@@ -139,12 +139,12 @@ class OpenGLWindow:
         pg.display.flip()
     
     def setupTexture(self):
-        animatedTex = pygame.image.load("./resources/animatedTexture.jpg")
-        # animatedTex is a 4000x3000 image that contains 48 frames of 500x500 images
-        frameWidth = 500 
-        frameHeight = 500
-        rows = 6 
-        columns = 8
+        animatedTex = pygame.image.load("./resources/lines.jpg")
+        # animatedTex is a 480 x 22560 image that contains 47 frames of 480x480 images
+        frameWidth = 480 
+        frameHeight = 480
+        rows = 47 
+        columns = 1
 
         for row in range(rows):
             for col in range(columns):
@@ -178,7 +178,7 @@ class OpenGLWindow:
             
             # Second light colour
             secondLightColour = glGetUniformLocation(self.shader, "secondLightColour")
-            glUniform3f(secondLightColour, 0.0, 1.0, 0.0)
+            glUniform3f(secondLightColour, 1.0, 0.0, 0.0)
             self.colourCycle = False
         else:
             self.colourCycle = False if gradient == False else True
@@ -203,12 +203,12 @@ class OpenGLWindow:
         if(reset == True):
             # Reset light positions
             firstLightPosition = glGetUniformLocation(self.shader, "firstLightPos")
-            glUniform3f(firstLightPosition, 10.0, 2.0, 0.0)  # First light position
-            self.lightModels[0] = Matrix44.from_translation(Vector3([10.0, 2.0, 0.0]))
+            glUniform3f(firstLightPosition, 10.0, 4.0, 0.0)  # First light position
+            self.lightModels[0] = Matrix44.from_translation(Vector3([10.0, 4.0, 0.0])) * self.scale
             
             secondLightPosition = glGetUniformLocation(self.shader, "secondLightPos")
-            glUniform3f(secondLightPosition, -10.0, -2.0, 0.0)  # Second light position
-            self.lightModels[1] = Matrix44.from_translation(Vector3([-10.0, 2.0, 0.0]))
+            glUniform3f(secondLightPosition, -10.0, -4.0, 0.0)  # Second light position
+            self.lightModels[1] = Matrix44.from_translation(Vector3([-10.0, -4.0, 0.0])) * self.scale
             self.orbiting = False  # Lights stop orbiting
         else:
             self.orbiting = False if orbit == False else True
@@ -218,15 +218,15 @@ class OpenGLWindow:
                 x = 10.0 * np.cos(np.radians(self.lightAngle)) 
                 z = 10.0 * np.sin(np.radians(self.lightAngle))
                 firstLightPosition = glGetUniformLocation(self.shader, "firstLightPos")
-                glUniform3f(firstLightPosition, x, 2.0, z)  # Update first light position
-                self.lightModels[0] = Matrix44.from_translation(Vector3([x, 2.0, z])) * self.scale # Updates the first light model
+                glUniform3f(firstLightPosition, x, 4.0, z)  # Update first light position
+                self.lightModels[0] = Matrix44.from_translation(Vector3([x, 4.0, z])) * self.scale # Updates the first light model
                 
                 # Updates the x and z coords for the second light
                 x = -10.0 * np.cos(-np.radians(self.lightAngle))
                 z = -10.0 * np.sin(-np.radians(self.lightAngle))
                 secondLightPosition = glGetUniformLocation(self.shader, "secondLightPos")
-                glUniform3f(secondLightPosition, x, -2.0, z)  # Update second light position
-                self.lightModels[1] = Matrix44.from_translation(Vector3([x, -2.0, z])) * self.scale # Updates the second light model
+                glUniform3f(secondLightPosition, x, -4.0, z)  # Update second light position
+                self.lightModels[1] = Matrix44.from_translation(Vector3([x, -4.0, z])) * self.scale # Updates the second light model
 
     def camRotate(self, val): # Rotates the camera around the model
         if(val > 0): # Rotate uniformly if input is positive
@@ -254,7 +254,7 @@ class OpenGLWindow:
         self.transformations.insert(0, rotationMatrix)
         self.applyTransformations()
 
-    def scale(self, val, axis): #Scales the model
+    def scaleModel(self, val, axis): #Scales the model
         if(val > 0): # Scale up uniformly if input is positive
             scaleVal = 1.1
         if(val < 0):  # Scale down uniformly if input is negative
@@ -277,11 +277,14 @@ class OpenGLWindow:
     def resetTransformations(self):
         self.model = Matrix44.identity() # Resets the first model
         self.view = Matrix44.look_at(Vector3([0.0, 0.0, 4.0]),Vector3([0.0, 0.0, 0.0]), Vector3([0.0, 1.0, 0.0])) # Resets the camera view
+        self.viewPos = Vector3([0.0, 0.0, 4.0])
+        self.view = Matrix44.look_at(self.viewPos, Vector3([0.0, 0.0, 0.0]), Vector3([0.0, 1.0, 0.0]))
         self.transformations.clear() # Clears the translation list
         self.lightOrbit(False, True) # Resets the lights back to default
         self.lightColour(False, True) # Resets colour to default
         self.lightAngle = 0
         self.colourGrad = 0
+        self.camAngle = 0
 
     def cleanup(self):
         glDeleteVertexArrays(1, (self.vao,))
