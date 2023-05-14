@@ -12,8 +12,8 @@ in vec3 fragmentPosition;
 in vec3 fragmentNormal;
 out vec4 OutColour;
 
-uniform float ambientIntensityFirst = 0.4;
-uniform float ambientIntensitySecond = 0.4;
+uniform float ambientIntensityFirst = 0.6;
+uniform float ambientIntensitySecond = 0.6;
 uniform float specularIntensityFirst = 0.6;
 uniform float specularIntensitySecond = 0.6;
 uniform float shineFirst = 512;
