@@ -16,8 +16,8 @@ uniform float ambientIntensityFirst = 0.3;
 uniform float ambientIntensitySecond = 0.3;
 uniform float specularIntensityFirst = 0.9;
 uniform float specularIntensitySecond = 0.9;
-uniform float shineCoefficientFirst = 512;
-uniform float shineCoefficientSecond = 512;
+uniform float shineCoefficientFirst = 64;
+uniform float shineCoefficientSecond = 64;
 
 vec3 calcLightComponents(vec3 lightPos, vec3 lightColour, float ambientIntensity, float specularIntensity, float shineCoefficient) {
     vec3 norm = normalize(fragmentNormal);
