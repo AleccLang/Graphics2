@@ -46,5 +46,5 @@ void main() {
     vec4 texColour = texture(textureSampler, fragmentTextureCoord);
     vec3 result = (firstLightComponents + secondLightComponents) * vec3(texColour);
 
-    OutColour = vec4(result, texColour.a);
+    OutColour = vec4(result, texColour.rgb);
 }
