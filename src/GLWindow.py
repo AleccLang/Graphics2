@@ -2,7 +2,6 @@ import pygame as pg
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram, compileShader
 import numpy as np
-import pygame
 from pyrr import Matrix44, Vector3
 
 from Geometry import Geometry
@@ -117,7 +116,7 @@ class OpenGLWindow:
         viewLoc = glGetUniformLocation(self.shader, "View")
         viewPosLoc = glGetUniformLocation(self.shader, "viewPosition")        
     
-        current_time = pygame.time.get_ticks()
+        current_time = pg.time.get_ticks()
         frame_duration = 100  # Show ing each frame for 100ms
         current_frame = (current_time // frame_duration) % len(self.textureFrames)
         glBindTexture(GL_TEXTURE_2D, self.textureFrames[current_frame]) # Binding the current frame 
@@ -139,7 +138,7 @@ class OpenGLWindow:
         pg.display.flip()
     
     def setupTexture(self):
-        animatedTex = pygame.image.load("./resources/lines.jpg")
+        animatedTex = pg.image.load("./resources/lines.jpg")
         # animatedTex is a 480 x 22560 image that contains 47 frames of 480x480 images
         frameWidth = 480 
         frameHeight = 480
@@ -153,9 +152,9 @@ class OpenGLWindow:
                 y = r * frameHeight
 
                 # Create a surface for the frame and copy frame onto it
-                frame = pygame.Surface((frameWidth, frameHeight), pygame.SRCALPHA)
+                frame = pg.Surface((frameWidth, frameHeight), pg.SRCALPHA)
                 frame.blit(animatedTex, (0, 0), (x, y, frameWidth, frameHeight))
-                textureData = pygame.image.tostring(frame, "RGB", 1) # Create texture the surface
+                textureData = pg.image.tostring(frame, "RGB", 1) # Create texture the surface
                 
                 texture = glGenTextures(1)
                 glBindTexture(GL_TEXTURE_2D, texture)
