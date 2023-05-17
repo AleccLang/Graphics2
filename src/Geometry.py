@@ -30,7 +30,7 @@ class Geometry:
         # texture data
         glEnableVertexAttribArray(1)
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(12))
-        # normal's data
+        # Normal's data
         glEnableVertexAttribArray(2)
         glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(20))
 

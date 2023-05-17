@@ -1,8 +1,8 @@
 #version 330 core
 
-layout (location=0) in vec3 position;
-layout (location=1) in vec2 textureCoord;
-layout (location=2) in vec3 normal;
+layout (location=0) in vec3 vertexPosition;
+layout (location=1) in vec2 vertexTextureCoord;
+layout (location=2) in vec3 vertexNormal;
 
 uniform mat4 Model;
 uniform mat4 View;
@@ -14,8 +14,8 @@ out vec3 fragmentNormal;
 
 void main()
 {
-    gl_Position = Projection * View * Model * vec4(position, 1.0);
-    fragmentTextureCoord = textureCoord;
-    fragmentPosition = vec3(Model * vec4(position, 1.0));
-    fragmentNormal = mat3(transpose(inverse(Model))) * normal;
+    gl_Position = Projection * View * Model * vec4(vertexPosition, 1.0);
+    fragmentTextureCoord = vertexTextureCoord;
+    fragmentPosition = vec3(Model * vec4(vertexPosition, 1.0));
+    fragmentNormal = mat3(transpose(inverse(Model))) * vertexNormal;
 }

@@ -146,26 +146,21 @@ class OpenGLWindow:
         rows = 47 
         columns = 1
 
-        for row in range(rows):
-            for col in range(columns):
+        for r in range(rows):
+            for c in range(columns):
                 # Calculate the position of the current frame in the image
-                x = col * frameWidth
-                y = row * frameHeight
+                x = c * frameWidth
+                y = r * frameHeight
 
-                # Create a new surface for the frame
-                frame_surface = pygame.Surface((frameWidth, frameHeight), pygame.SRCALPHA)
+                # Create a surface for the frame and copy frame onto it
+                frame = pygame.Surface((frameWidth, frameHeight), pygame.SRCALPHA)
+                frame.blit(animatedTex, (0, 0), (x, y, frameWidth, frameHeight))
+                textureData = pygame.image.tostring(frame, "RGB", 1) # Create texture the surface
                 
-                # Blit the image onto the new surface at the correct offset
-                frame_surface.blit(animatedTex, (0, 0), (x, y, frameWidth, frameHeight))
-                
-                # Create texture from surface
-                textureData = pygame.image.tostring(frame_surface, "RGB", 1)
                 texture = glGenTextures(1)
                 glBindTexture(GL_TEXTURE_2D, texture)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frameWidth, frameHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData)
                 self.textureFrames.append(texture)
 
