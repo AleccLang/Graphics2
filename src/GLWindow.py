@@ -95,7 +95,7 @@ class OpenGLWindow:
         firstLightPosition = glGetUniformLocation(self.shader, "firstLightPosition")
         glUniform3f(firstLightPosition, 10.0, 4.0, 0.0)  # First light position
         firstLightColour = glGetUniformLocation(self.shader, "firstLightColour")
-        glUniform3f(firstLightColour, 0.0, 0.0, 1.0)  # First light's colour
+        glUniform3f(firstLightColour, 0.5, 0.0, 0.5)  # First light's colour
 
         # Second light colour and position
         secondLightPosition = glGetUniformLocation(self.shader, "secondLightPosition")
@@ -168,7 +168,7 @@ class OpenGLWindow:
         if(reset == True):
             # First light colour
             firstLightColour = glGetUniformLocation(self.shader, "firstLightColour")
-            glUniform3f(firstLightColour, 0.0, 0.0, 1.0)
+            glUniform3f(firstLightColour, 0.5, 0.0, 0.5)
             
             # Second light colour
             secondLightColour = glGetUniformLocation(self.shader, "secondLightColour")
