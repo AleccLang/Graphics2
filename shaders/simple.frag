@@ -1,9 +1,9 @@
 #version 330 core
 
-uniform vec3 viewPos;
-uniform vec3 firstLightPos;
+uniform vec3 viewPosition;
+uniform vec3 firstLightPosition;
 uniform vec3 firstLightColour;
-uniform vec3 secondLightPos;
+uniform vec3 secondLightPosition;
 uniform vec3 secondLightColour;
 uniform sampler2D textureSampler;
 
@@ -19,10 +19,10 @@ uniform float specularIntensitySecond = 0.9;
 uniform float shineCoefficientFirst = 64;
 uniform float shineCoefficientSecond = 64;
 
-vec3 calcLightComponents(vec3 lightPos, vec3 lightColour, float ambientIntensity, float specularIntensity, float shineCoefficient) {
+vec3 calcLightComponents(vec3 lightPosition, vec3 lightColour, float ambientIntensity, float specularIntensity, float shineCoefficient) {
     vec3 norm = normalize(fragmentNormal);
-    vec3 lightDir = normalize(lightPos - fragmentPosition); // direction from fragment to the light source
-    vec3 viewDir = normalize(viewPos - fragmentPosition); // direction from fragment to the viewer
+    vec3 lightDir = normalize(lightPosition - fragmentPosition); // direction from fragment to the light source
+    vec3 viewDir = normalize(viewPosition - fragmentPosition); // direction from fragment to the viewer
     vec3 reflectDir = reflect(-lightDir, norm); // direction that perfectly reflected ray would take
 
     // Ambient light component
@@ -40,8 +40,8 @@ vec3 calcLightComponents(vec3 lightPos, vec3 lightColour, float ambientIntensity
 }
 
 void main() {
-    vec3 firstLightComponents = calcLightComponents(firstLightPos, firstLightColour, ambientIntensityFirst, specularIntensityFirst, shineCoefficientFirst); // The first light's 'light'
-    vec3 secondLightComponents = calcLightComponents(secondLightPos, secondLightColour, ambientIntensitySecond, specularIntensitySecond, shineCoefficientSecond); // The second light's 'light'
+    vec3 firstLightComponents = calcLightComponents(firstLightPosition, firstLightColour, ambientIntensityFirst, specularIntensityFirst, shineCoefficientFirst); // The first light's 'light'
+    vec3 secondLightComponents = calcLightComponents(secondLightPosition, secondLightColour, ambientIntensitySecond, specularIntensitySecond, shineCoefficientSecond); // The second light's 'light'
 
     vec4 texColour = texture(textureSampler, fragmentTextureCoord);
     vec3 result = (firstLightComponents + secondLightComponents) * vec3(texColour);

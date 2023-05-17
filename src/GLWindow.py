@@ -89,17 +89,17 @@ class OpenGLWindow:
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, self.view)
         projectionLoc = glGetUniformLocation(self.shader, "Projection")
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, camProjection)
-        viewPosLoc = glGetUniformLocation(self.shader, "viewPos")
+        viewPosLoc = glGetUniformLocation(self.shader, "viewPosition")
         glUniform3fv(viewPosLoc, 1 ,self.viewPos) # Camera view
         
         # First light colour and position
-        firstLightPosition = glGetUniformLocation(self.shader, "firstLightPos")
+        firstLightPosition = glGetUniformLocation(self.shader, "firstLightPosition")
         glUniform3f(firstLightPosition, 10.0, 4.0, 0.0)  # First light position
         firstLightColour = glGetUniformLocation(self.shader, "firstLightColour")
         glUniform3f(firstLightColour, 0.0, 0.0, 1.0)  # First light's colour
 
         # Second light colour and position
-        secondLightPosition = glGetUniformLocation(self.shader, "secondLightPos")
+        secondLightPosition = glGetUniformLocation(self.shader, "secondLightPosition")
         glUniform3f(secondLightPosition, -10.0, -4.0, 0.0)  # Second light position
         secondLightColour = glGetUniformLocation(self.shader, "secondLightColour")
         glUniform3f(secondLightColour, 1.0, 0.0, 0.0)  # Second light's colour
@@ -115,7 +115,7 @@ class OpenGLWindow:
         glUseProgram(self.shader)  # You may not need this line
         modelLoc = glGetUniformLocation(self.shader, "Model")
         viewLoc = glGetUniformLocation(self.shader, "View")
-        viewPosLoc = glGetUniformLocation(self.shader, "viewPos")        
+        viewPosLoc = glGetUniformLocation(self.shader, "viewPosition")        
     
         current_time = pygame.time.get_ticks()
         frame_duration = 100  # Show ing each frame for 100ms
@@ -197,11 +197,11 @@ class OpenGLWindow:
     def lightOrbit(self, orbit, reset):
         if(reset == True):
             # Reset light positions
-            firstLightPosition = glGetUniformLocation(self.shader, "firstLightPos")
+            firstLightPosition = glGetUniformLocation(self.shader, "firstLightPosition")
             glUniform3f(firstLightPosition, 10.0, 4.0, 0.0)  # First light position
             self.lightModels[0] = Matrix44.from_translation(Vector3([10.0, 4.0, 0.0])) * self.scale
             
-            secondLightPosition = glGetUniformLocation(self.shader, "secondLightPos")
+            secondLightPosition = glGetUniformLocation(self.shader, "secondLightPosition")
             glUniform3f(secondLightPosition, -10.0, -4.0, 0.0)  # Second light position
             self.lightModels[1] = Matrix44.from_translation(Vector3([-10.0, -4.0, 0.0])) * self.scale
             self.orbiting = False  # Lights stop orbiting
@@ -212,14 +212,14 @@ class OpenGLWindow:
                 # Updates the x and z coords for the first light
                 x = 10.0 * np.cos(np.radians(self.lightAngle)) 
                 z = 10.0 * np.sin(np.radians(self.lightAngle))
-                firstLightPosition = glGetUniformLocation(self.shader, "firstLightPos")
+                firstLightPosition = glGetUniformLocation(self.shader, "firstLightPosition")
                 glUniform3f(firstLightPosition, x, 4.0, z)  # Update first light position
                 self.lightModels[0] = Matrix44.from_translation(Vector3([x, 4.0, z])) * self.scale # Updates the first light model
                 
                 # Updates the x and z coords for the second light
                 x = -10.0 * np.cos(-np.radians(self.lightAngle))
                 z = -10.0 * np.sin(-np.radians(self.lightAngle))
-                secondLightPosition = glGetUniformLocation(self.shader, "secondLightPos")
+                secondLightPosition = glGetUniformLocation(self.shader, "secondLightPosition")
                 glUniform3f(secondLightPosition, x, -4.0, z)  # Update second light position
                 self.lightModels[1] = Matrix44.from_translation(Vector3([x, -4.0, z])) * self.scale # Updates the second light model
 
