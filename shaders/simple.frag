@@ -7,8 +7,8 @@ uniform vec3 secondLightPosition;
 uniform vec3 secondLightColour;
 uniform sampler2D textureSampler;
 
-in vec2 fragmentTextureCoord;
-in vec3 fragmentPosition;
+in vec2 fragmentTexCoord;
+in vec3 fragmentPos;
 in vec3 fragmentNormal;
 out vec4 OutColour;
 
@@ -21,9 +21,9 @@ uniform float shineCoefficientSecond = 64;
 
 vec3 calcLightComponents(vec3 lightPosition, vec3 lightColour, float ambientIntensity, float specularIntensity, float shineCoefficient) {
     vec3 N = normalize(fragmentNormal); // normal to the surface
-    vec3 L = normalize(lightPosition - fragmentPosition); // direction from fragment to the light source
+    vec3 L = normalize(lightPosition - fragmentPos); // direction from fragment to the light source
     vec3 R = reflect(-L, N); // direction that perfectly reflected ray would take
-    vec3 V = normalize(viewPosition - fragmentPosition); // direction from fragment to the viewer
+    vec3 V = normalize(viewPosition - fragmentPos); // direction from fragment to the viewer
     
     // Ambient light component
     vec3 ambientLight = ambientIntensity * lightColour;
@@ -43,7 +43,7 @@ void main() {
     vec3 firstLightComponents = calcLightComponents(firstLightPosition, firstLightColour, ambientIntensityFirst, specularIntensityFirst, shineCoefficientFirst); // The first light's 'light'
     vec3 secondLightComponents = calcLightComponents(secondLightPosition, secondLightColour, ambientIntensitySecond, specularIntensitySecond, shineCoefficientSecond); // The second light's 'light'
 
-    vec4 texColour = texture(textureSampler, fragmentTextureCoord);
+    vec4 texColour = texture(textureSampler, fragmentTexCoord);
     vec3 result = (firstLightComponents + secondLightComponents) * vec3(texColour);
 
     OutColour = vec4(result, texColour.rgb);
