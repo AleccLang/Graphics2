@@ -62,7 +62,7 @@ def main():
 					print("Rotate")
 					win.rotate(value, axis)
      
-				if key == pg.K_c and value != 0:  # This event triggers when the 'c' has been selected, an axis is chosen and + or - has been pressed
+				if key == pg.K_c and value != 0:  # This event triggers when the 'c' has been selected and + or - has been pressed
 					print("Camera Rotate")
 					win.camRotate(value)
      
