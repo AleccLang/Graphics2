@@ -101,7 +101,7 @@ class OpenGLWindow:
         secondLightPosition = glGetUniformLocation(self.shader, "secondLightPosition")
         glUniform3f(secondLightPosition, -10.0, -4.0, 0.0)  # Second light position
         secondLightColour = glGetUniformLocation(self.shader, "secondLightColour")
-        glUniform3f(secondLightColour, 1.0, 0.0, 0.0)  # Second light's colour
+        glUniform3f(secondLightColour, 0.0, 0.7, 0.3)  # Second light's colour
 
         self.setupTexture() # loads in and sets up the texture image
         
@@ -116,10 +116,10 @@ class OpenGLWindow:
         viewLoc = glGetUniformLocation(self.shader, "View")
         viewPosLoc = glGetUniformLocation(self.shader, "viewPosition")        
     
-        current_time = pg.time.get_ticks()
-        frame_duration = 100  # Show ing each frame for 100ms
-        current_frame = (current_time // frame_duration) % len(self.textureFrames)
-        glBindTexture(GL_TEXTURE_2D, self.textureFrames[current_frame]) # Binding the current frame 
+        currentTime = pg.time.get_ticks()
+        duration = 100  # Show ing each frame for 100ms
+        currentFrame = (currentTime // duration) % len(self.textureFrames)
+        glBindTexture(GL_TEXTURE_2D, self.textureFrames[currentFrame]) # Binding the current frame 
     
         # Renders first model
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, self.model)
@@ -172,7 +172,7 @@ class OpenGLWindow:
             
             # Second light colour
             secondLightColour = glGetUniformLocation(self.shader, "secondLightColour")
-            glUniform3f(secondLightColour, 1.0, 0.0, 0.0)
+            glUniform3f(secondLightColour, 0.0, 0.7, 0.3)
             self.colourCycle = False
         else:
             self.colourCycle = False if gradient == False else True

@@ -20,23 +20,24 @@ uniform float shineCoefficientFirst = 64;
 uniform float shineCoefficientSecond = 64;
 
 vec3 calcLightComponents(vec3 lightPosition, vec3 lightColour, float ambientIntensity, float specularIntensity, float shineCoefficient) {
-    vec3 norm = normalize(fragmentNormal);
-    vec3 lightDir = normalize(lightPosition - fragmentPosition); // direction from fragment to the light source
-    vec3 viewDir = normalize(viewPosition - fragmentPosition); // direction from fragment to the viewer
-    vec3 reflectDir = reflect(-lightDir, norm); // direction that perfectly reflected ray would take
+    vec3 N = normalize(fragmentNormal); // normal to the surface
+    vec3 L = normalize(lightPosition - fragmentPosition); // direction from fragment to the light source
+    vec3 R = reflect(-L, N); // direction that perfectly reflected ray would take
+    vec3 V = normalize(viewPosition - fragmentPosition); // direction from fragment to the viewer
+    
 
     // Ambient light component
-    vec3 amb = ambientIntensity * lightColour;
+    vec3 ambientLight = ambientIntensity * lightColour;
 
     // Diffuse light component
-    float kd = max(dot(norm, lightDir), 0.0);
-    vec3 diff = kd * lightColour;
+    float kd = max(dot(N, L), 0.0);
+    vec3 diffuseLight = kd * lightColour;
 
     // Specular light component 
-    float ks = pow(max(dot(viewDir, reflectDir), 0.0), shineCoefficient);
-    vec3 spec = specularIntensity * ks * lightColour;
+    float ks = pow(max(dot(V, R), 0.0), shineCoefficient);
+    vec3 specularLight = specularIntensity * ks * lightColour;
 
-    return amb + diff + spec;
+    return ambientLight + diffuseLight + specularLight;
 }
 
 void main() {
