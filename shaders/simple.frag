@@ -25,7 +25,6 @@ vec3 calcLightComponents(vec3 lightPosition, vec3 lightColour, float ambientInte
     vec3 R = reflect(-L, N); // direction that perfectly reflected ray would take
     vec3 V = normalize(viewPosition - fragmentPosition); // direction from fragment to the viewer
     
-
     // Ambient light component
     vec3 ambientLight = ambientIntensity * lightColour;
 
