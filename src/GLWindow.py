@@ -154,7 +154,7 @@ class OpenGLWindow:
                 # Create a surface for the frame and copy frame onto it
                 frame = pg.Surface((frameWidth, frameHeight), pg.SRCALPHA)
                 frame.blit(animatedTex, (0, 0), (x, y, frameWidth, frameHeight))
-                textureData = pg.image.tostring(frame, "RGB", 1) # Create texture the surface
+                textureData = pg.image.tostring(frame, "RGB", 1)
                 
                 texture = glGenTextures(1)
                 glBindTexture(GL_TEXTURE_2D, texture)
